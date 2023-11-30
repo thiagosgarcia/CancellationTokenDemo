@@ -1,0 +1,41 @@
+<html>
+    <body>
+        <input type="text" id="text2" onkeyup="debounce()" />
+        <ul name="op" id="list">
+            <li>test</li>
+        </ul>
+        <script>
+            var xhr = new XMLHttpRequest();
+            var timeout;
+
+            function debounce(){
+                if(!!xhr && xhr.readyState != 4 ){
+                    xhr.abort();
+                }
+                if(!!timeout){
+                    clearTimeout(timeout);
+                }
+
+                timeout = setTimeout(()=> test() , 300);
+            }
+
+            function test() {
+                xhr.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        var json = JSON.parse(xhr.responseText);
+
+                        document.getElementById("list").innerHTML = "";
+                        var list = document.getElementById("list");
+                        json.forEach(element => {
+                            var li = document.createElement("li");
+                            li.appendChild(document.createTextNode(element));
+                            list.appendChild(li);
+                        });
+                    }
+                };
+                xhr.open("GET", "https://localhost:5001/TypeAhead?param=" + document.getElementById("text2").value, true);
+                xhr.send();
+            }
+        </script>
+    </body>
+</html>
